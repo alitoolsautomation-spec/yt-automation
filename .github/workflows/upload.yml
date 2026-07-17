@@ -1,0 +1,37 @@
+name: YouTube Auto Upload
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+    - cron: "0 10 * * *"
+    - cron: "0 15 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  upload-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore YouTube token
+        run: echo "${{ secrets.YOUTUBE_TOKEN_B64 }}" | base64 -d > token.pickle
+
+      - name: Restore YouTube client secret
+        run: echo "${{ secrets.YOUTUBE_CLIENT_SECRET_B64 }}" | base64 -d > client_secret.json
+
+      - name: Run pipeline
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          YOUTUBE_CLIENT_SECRET_FILE: client_secret.json
+        run: python main.py
