@@ -10,7 +10,16 @@ GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama-3.3-70b-versatile"
 
 
-def generate_video_content(theme: str, language: str = "Urdu") -> dict:
+def generate_video_content(theme: str, language: str = "Urdu", video_format: str = "short") -> dict:
+    if video_format == "long":
+        length_instruction = "4-6 minute (roughly 600-900 words) in-depth"
+        script_note = "This is a longer video, so develop the story with more detail, examples, and structure (intro, 2-3 main points, conclusion) while staying engaging throughout."
+        footage_extra = ', "keyword 4", "keyword 5", "keyword 6", "keyword 7"'
+    else:
+        length_instruction = "60-90 second (roughly 150-220 words)"
+        script_note = "Keep it tight and punchy since this is a short-form video."
+        footage_extra = ""
+
     if language.lower() == "urdu":
         script_rules = """ZAROORI HIDAYAAT for "script" field (ye seedha text-to-speech
 engine parhega, is liye):
@@ -38,12 +47,13 @@ short-form scripts AND search-optimized metadata.
 Theme: {theme}
 Output language: {title_desc_lang}
 
-## SCRIPT (60-90 seconds, ~150-220 words)
+## SCRIPT ({length_instruction})
 - Open with a strong hook in the first line (a question, shocking fact, or
   bold claim) that stops someone from scrolling
 - Middle: tell a vivid, specific story or fact with real emotional or
   "wow" value - avoid generic/vague statements
 - End with a punchy, memorable takeaway line
+- {script_note}
 {script_rules}
 
 ## SEO TITLE - THIS IS THE MOST IMPORTANT PART
@@ -94,7 +104,7 @@ Return ONLY this exact JSON, no preamble, no markdown fences:
   "script": "Full voiceover script in {title_desc_lang} (following script rules above)",
   "description": "SEO-optimized description in {title_desc_lang} with hashtags at the end",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5", "tag6", "tag7", "tag8", "tag9", "tag10"],
-  "footage_keywords": ["english keyword for stock footage search 1", "keyword 2", "keyword 3"]
+  "footage_keywords": ["english keyword for stock footage search 1", "keyword 2", "keyword 3"{footage_extra}]
 }}"""
 
     api_key = os.getenv("GROQ_API_KEY")
@@ -111,6 +121,7 @@ Return ONLY this exact JSON, no preamble, no markdown fences:
                 "model": MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 1.0,
+                "max_tokens": 3000,
             },
             timeout=60,
         )

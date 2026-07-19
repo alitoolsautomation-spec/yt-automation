@@ -8,13 +8,15 @@ import requests
 PEXELS_API_URL = "https://api.pexels.com/videos/search"
 
 
-def fetch_clips(keywords: list, clips_per_keyword: int = 1, out_dir: str = "clips") -> list:
+def fetch_clips(keywords: list, clips_per_keyword: int = 1, out_dir: str = "clips",
+                 orientation: str = "vertical") -> list:
     os.makedirs(out_dir, exist_ok=True)
     headers = {"Authorization": os.getenv("PEXELS_API_KEY")}
     downloaded = []
+    pexels_orientation = "landscape" if orientation == "horizontal" else "portrait"
 
     for i, keyword in enumerate(keywords):
-        params = {"query": keyword, "per_page": clips_per_keyword, "orientation": "portrait"}
+        params = {"query": keyword, "per_page": clips_per_keyword, "orientation": pexels_orientation}
         resp = requests.get(PEXELS_API_URL, headers=headers, params=params, timeout=30)
         resp.raise_for_status()
         data = resp.json()

@@ -22,9 +22,9 @@ if len(sys.argv) > 1:
 else:
     category = random.choice(CATEGORIES)
 
-print(f"Category: {category['theme']} ({category['language']})\n")
+print(f"Category: {category['theme']} ({category['language']}, {category.get('format', 'short')})\n")
 
-content = generate_video_content(category["theme"], category["language"])
+content = generate_video_content(category["theme"], category["language"], category.get("format", "short"))
 
 print("=" * 50)
 print("TITLE:", content["title"])

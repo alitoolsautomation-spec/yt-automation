@@ -1,7 +1,6 @@
 """
-Main pipeline: generates one full video (random topic + language from
-categories.py) and uploads it to YouTube. Run this directly to produce
-ONE video, or use scheduler.py to run it automatically 2-3 times a day.
+Main pipeline: generates one full video (random topic + language +
+format from categories.py) and uploads it to YouTube.
 """
 import os
 import random
@@ -29,26 +28,31 @@ def run_pipeline():
     category = random.choice(CATEGORIES)
     theme = category["theme"]
     language = category["language"]
+    video_format = category.get("format", "short")
+    orientation = "horizontal" if video_format == "long" else "vertical"
 
-    print(f"[{run_id}] Category: {theme} ({language})")
+    print(f"[{run_id}] Category: {theme} ({language}, {video_format})")
 
     print(f"[{run_id}] 1/5 Generating script + metadata...")
-    content = generate_video_content(theme, language)
+    content = generate_video_content(theme, language, video_format)
     print(f"    Title: {content['title']}")
 
     print(f"[{run_id}] 2/5 Generating voiceover...")
     audio_path = generate_voiceover(content["script"], language, f"{work_dir}/voiceover.mp3")
 
     print(f"[{run_id}] 3/5 Fetching background clips...")
-    clip_paths = fetch_clips(content["footage_keywords"], out_dir=f"{work_dir}/clips")
+    clip_paths = fetch_clips(content["footage_keywords"], out_dir=f"{work_dir}/clips",
+                              orientation=orientation)
 
     print(f"[{run_id}] 4/5 Assembling final video...")
     video_path = assemble_video(clip_paths, audio_path, content["title"],
-                                 output_path=f"{work_dir}/final.mp4")
+                                 output_path=f"{work_dir}/final.mp4",
+                                 orientation=orientation)
 
     print(f"[{run_id}] Generating thumbnail...")
     thumbnail_path = generate_thumbnail(video_path, content["title"],
-                                         output_path=f"{work_dir}/thumbnail.jpg")
+                                         output_path=f"{work_dir}/thumbnail.jpg",
+                                         orientation=orientation)
 
     print(f"[{run_id}] 5/5 Uploading to YouTube...")
     video_id = upload_video(
