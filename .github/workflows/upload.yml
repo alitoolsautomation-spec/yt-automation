@@ -11,6 +11,8 @@ jobs:
   upload-video:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -35,3 +37,11 @@ jobs:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           YOUTUBE_CLIENT_SECRET_FILE: client_secret.json
         run: python main.py
+
+      - name: Save script log back to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add scripts_log.jsonl || true
+          git diff --staged --quiet || git commit -m "Log script from run"
+          git push || true
