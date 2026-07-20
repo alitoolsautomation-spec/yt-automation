@@ -9,7 +9,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+SCOPES = ["https://www.googleapis.com/auth/youtube"]
 TOKEN_FILE = "token.pickle"
 
 
@@ -25,9 +25,6 @@ def get_authenticated_service():
         else:
             client_secret_file = os.getenv("YOUTUBE_CLIENT_SECRET_FILE")
             flow = InstalledAppFlow.from_client_secrets_file(client_secret_file, SCOPES)
-            # Runs a local server for one-time browser OAuth consent (do this once manually).
-            # access_type=offline + prompt=consent ensures a refresh_token is issued so
-            # this keeps working unattended in GitHub Actions without re-login.
             creds = flow.run_local_server(port=0, access_type="offline", prompt="consent")
         with open(TOKEN_FILE, "wb") as f:
             pickle.dump(creds, f)
