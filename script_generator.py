@@ -41,15 +41,42 @@ directly by a text-to-speech engine):
         title_desc_lang = "English"
 
     prompt = f"""You are an expert YouTube Shorts creator and SEO strategist who
-has grown multiple channels to monetization. You write viral, high-retention
-short-form scripts AND search-optimized metadata.
+has grown multiple channels to monetization, specifically targeting a
+United States audience.
 
 Theme: {theme}
 Output language: {title_desc_lang}
+Target audience: United States viewers
+
+AUDIENCE TARGETING RULES:
+- Use American English spelling and phrasing throughout (e.g. "favorite"
+  not "favourite", "color" not "colour")
+- Prefer examples, references, and figures that resonate with a US
+  audience (well-known American entrepreneurs, US history, familiar
+  US cultural touchpoints) when the theme allows it naturally - don't
+  force it if the topic is universal (e.g. space facts, Islamic content)
+- Use measurement units and cultural context familiar to US viewers
+  (dollars, Fahrenheit, miles) when relevant
 
 ## SCRIPT ({length_instruction})
-- Open with a strong hook in the first line (a question, shocking fact, or
-  bold claim) that stops someone from scrolling
+THE OPENING LINE IS THE MOST CRITICAL PART - most viewers decide to keep
+watching or swipe away within 1-2 seconds. Follow these rules strictly:
+- NEVER start with a greeting, intro, or setup ("Hi guys", "Today I want
+  to tell you", "Let me tell you about", "Have you ever wondered")
+- Start with a bold, specific, slightly shocking statement or an
+  incomplete thought that creates an open curiosity gap the viewer MUST
+  keep watching to close
+- Good openers: "He was fired three times before he became a billionaire."
+  / "This one habit is why 90% of people stay poor." / "Nobody tells you
+  this about failure." / "In 1968 a scientist discovered something that
+  changed everything."
+- Bad openers (NEVER use): "Have you ever wondered why...", "Today we're
+  going to talk about...", "This is a story about...", "Let me share
+  with you..."
+- The hook must be SPECIFIC (a name, number, date, or concrete claim),
+  never vague or generic
+- After the hook, keep escalating - each sentence should make the viewer
+  want the next sentence, don't let the energy drop in the middle
 - Middle: tell a vivid, specific story or fact with real emotional or
   "wow" value - avoid generic/vague statements
 - End with a punchy, memorable takeaway line
@@ -91,6 +118,11 @@ Rules:
   only if genuinely about wealth)
 - If you cannot make it punchy, specific, AND keyword-rich, rewrite it
   until you can
+- IMPORTANT: Do not default to the "99% Of People Don't Know This 1
+  Habit/Mistake" template every time - vary the structure across
+  different videos (try "why X happens", "the real reason Y", "how X
+  changed everything", "what nobody tells you", numbered lists,
+  before/after framing, direct bold claims, etc.)
 
 ## SEO DESCRIPTION (critical for search ranking) - WRITE 6-8 FULL LINES
 - Line 1-2: restate the hook/main keyword naturally as if answering what
@@ -108,6 +140,9 @@ Rules:
 - 10-15 tags mixing: broad high-search-volume tags (motivation, success,
   islamic reminder, facts, shorts, viral shorts), medium-competition niche
   tags related to the theme, and 2-3 long-tail specific phrase tags
+- Include terms US viewers commonly search (e.g. "motivation usa",
+  "american success story" where naturally relevant - don't force this
+  on universal topics)
 
 Return ONLY this exact JSON, no preamble, no markdown fences:
 
