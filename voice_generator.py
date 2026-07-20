@@ -10,7 +10,7 @@ VOICES = {
     "urdu": "ur-PK-UzmaNeural",
     "english": "en-US-AriaNeural",
 }
-RATE = "-8%"
+RATE = "+3%"
 PITCH = "+0Hz"
 
 

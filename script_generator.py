@@ -54,6 +54,18 @@ Output language: {title_desc_lang}
   "wow" value - avoid generic/vague statements
 - End with a punchy, memorable takeaway line
 - {script_note}
+- TONE: Write this like an energetic, dramatic storyteller narrating out
+  loud - NOT like a calm textbook or news reader. Use these techniques:
+  - Vary sentence length sharply: mix short punchy sentences ("He failed.
+    Again.") with longer flowing ones for rhythm
+  - Build suspense before key moments ("But then, something incredible
+    happened...")
+  - Use rhetorical questions to pull the listener in
+  - Include a moment of tension, surprise, or a twist wherever the story
+    allows it
+  - React to the story as you tell it (mild exclamations, emphasis words
+    like "incredible", "shocking", "here's the crazy part")
+  - Avoid flat, purely factual delivery - make every sentence carry energy
 {script_rules}
 
 ## SEO TITLE - THIS IS THE MOST IMPORTANT PART
