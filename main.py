@@ -3,6 +3,8 @@ Main pipeline: generates one full video (random topic + language +
 format from categories.py) and uploads it to YouTube.
 """
 import os
+import sys
+import json
 import random
 import shutil
 import traceback
@@ -15,7 +17,7 @@ from voice_generator import generate_voiceover
 from footage_fetcher import fetch_clips
 from video_assembler import assemble_video
 from thumbnail_generator import generate_thumbnail
-from youtube_uploader import upload_video, set_thumbnail
+from youtube_uploader import upload_video, set_thumbnail, post_engagement_comment
 
 load_dotenv()
 
@@ -25,7 +27,10 @@ def run_pipeline():
     work_dir = f"runs/{run_id}"
     os.makedirs(work_dir, exist_ok=True)
 
-    category = random.choice(CATEGORIES)
+    if len(sys.argv) > 1:
+        category = CATEGORIES[int(sys.argv[1])]
+    else:
+        category = random.choice(CATEGORIES)
     theme = category["theme"]
     language = category["language"]
     video_format = category.get("format", "short")
@@ -63,7 +68,25 @@ def run_pipeline():
     )
     set_thumbnail(video_id, thumbnail_path)
 
+    if content.get("engagement_comment"):
+        post_engagement_comment(video_id, content["engagement_comment"])
+
     print(f"[{run_id}] DONE -> https://youtube.com/watch?v={video_id}")
+
+    # Save script content permanently to a log file (so it's never lost)
+    log_entry = {
+        "run_id": run_id,
+        "video_id": video_id,
+        "video_url": f"https://youtube.com/watch?v={video_id}",
+        "language": language,
+        "format": video_format,
+        "title": content["title"],
+        "script": content["script"],
+        "description": content["description"],
+        "tags": content["tags"],
+    }
+    with open("scripts_log.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
 
     shutil.rmtree(f"{work_dir}/clips", ignore_errors=True)
 

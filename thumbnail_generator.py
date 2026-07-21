@@ -31,7 +31,7 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
     draw = ImageDraw.Draw(img)
     width, height = img.size
 
-    font_size = int(width * 0.09)
+    font_size = int(width * 0.12)
     font = None
     for font_path in [
         "/usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf",
@@ -47,8 +47,8 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
     if font is None:
         font = ImageFont.load_default()
 
-    short_text = " ".join(hook_text.split()[:6]).upper()
-    wrapped = textwrap.fill(short_text, width=16)
+    short_text = " ".join(hook_text.split()[:4]).upper()
+    wrapped = textwrap.fill(short_text, width=12)
 
     lines = wrapped.split("\n")
     total_h = sum(draw.textbbox((0, 0), line, font=font)[3] for line in lines) * 1.2

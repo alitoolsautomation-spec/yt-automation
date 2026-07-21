@@ -77,6 +77,12 @@ watching or swipe away within 1-2 seconds. Follow these rules strictly:
   never vague or generic
 - After the hook, keep escalating - each sentence should make the viewer
   want the next sentence, don't let the energy drop in the middle
+- CRITICAL PACING RULE (based on real audience data): after the opening
+  hook, reveal the core answer/habit/fact within the first 15 seconds
+  (roughly the first 2-3 sentences) rather than saving it for the end.
+  Then spend the rest of the script explaining WHY it works and HOW to
+  apply it. Viewers who get quick value stay longer than viewers made to
+  wait for a reveal.
 - Middle: tell a vivid, specific story or fact with real emotional or
   "wow" value - avoid generic/vague statements
 - End with a punchy, memorable takeaway line
@@ -94,6 +100,17 @@ watching or swipe away within 1-2 seconds. Follow these rules strictly:
     like "incredible", "shocking", "here's the crazy part")
   - Avoid flat, purely factual delivery - make every sentence carry energy
 {script_rules}
+
+## ISLAMIC CONTENT REFERENCE RULE (only applies if the theme is Islamic)
+If this video's theme is Islamic in nature, include a source reference in
+the description (e.g. "Quran, Surah [Name] [Chapter:Verse]" or "Hadith,
+[Collection name, e.g. Sahih Bukhari], [Book/Number if well known]").
+CRITICAL ACCURACY RULE: Only cite a specific verse/hadith number if it is
+a well-known, widely-cited one you are highly confident about (e.g.
+commonly referenced verses on patience, gratitude, trust in Allah). If
+you are not fully certain of the exact reference, do NOT invent a
+citation - instead write "a general Islamic teaching on [topic]" without
+a fabricated specific number. A wrong citation is worse than no citation.
 
 ## SEO TITLE - THIS IS THE MOST IMPORTANT PART
 Bad generic titles (NEVER write like this): "Discipline Leads To Success",
@@ -151,6 +168,7 @@ Return ONLY this exact JSON, no preamble, no markdown fences:
   "script": "Full voiceover script in {title_desc_lang} (following script rules above)",
   "description": "SEO-optimized description in {title_desc_lang} with hashtags at the end",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5", "tag6", "tag7", "tag8", "tag9", "tag10"],
+  "engagement_comment": "A short, genuine question related to this video's topic that invites viewers to share their own experience or opinion in the comments (in {title_desc_lang})",
   "footage_keywords": ["english keyword for stock footage search 1", "keyword 2", "keyword 3"{footage_extra}]
 }}"""
 
