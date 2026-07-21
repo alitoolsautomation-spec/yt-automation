@@ -2,15 +2,17 @@ name: YouTube Auto Upload
 
 on:
   schedule:
+    # Times are UTC, chosen to hit US prime engagement windows (Eastern Time):
+    # 11am ET (lunch scroll), 3pm ET (afternoon break), 7pm ET (evening prime time)
     - cron: "0 16 * * *"  # 11:00 AM ET
     - cron: "0 20 * * *"  # 3:00 PM ET
     - cron: "0 0 * * *"   # 7:00 PM ET (previous day in UTC)
-  workflow_dispatch: {}
+  workflow_dispatch: {}   # lets you also trigger it manually from GitHub UI
 
 jobs:
   upload-video:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     permissions:
       contents: write
     steps:
