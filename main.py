@@ -16,6 +16,7 @@ from script_generator import generate_video_content
 from voice_generator import generate_voiceover
 from footage_fetcher import fetch_clips
 from video_assembler import assemble_video
+from background_music import fetch_random_music, mix_narration_with_music, get_attribution_text
 from thumbnail_generator import generate_thumbnail
 from youtube_uploader import upload_video, set_thumbnail, post_engagement_comment
 
@@ -45,12 +46,18 @@ def run_pipeline():
     print(f"[{run_id}] 2/5 Generating voiceover...")
     audio_path = generate_voiceover(content["script"], language, f"{work_dir}/voiceover.mp3")
 
+    print(f"[{run_id}] Adding background music...")
+    music_path, track_name = fetch_random_music(f"{work_dir}/music.mp3")
+    mixed_audio_path = mix_narration_with_music(
+        audio_path, music_path, output_path=f"{work_dir}/mixed_audio.mp3"
+    )
+
     print(f"[{run_id}] 3/5 Fetching background clips...")
     clip_paths = fetch_clips(content["footage_keywords"], out_dir=f"{work_dir}/clips",
                               orientation=orientation)
 
     print(f"[{run_id}] 4/5 Assembling final video...")
-    video_path = assemble_video(clip_paths, audio_path, content["title"],
+    video_path = assemble_video(clip_paths, mixed_audio_path, content["title"],
                                  output_path=f"{work_dir}/final.mp4",
                                  orientation=orientation)
 
@@ -60,10 +67,11 @@ def run_pipeline():
                                          orientation=orientation)
 
     print(f"[{run_id}] 5/5 Uploading to YouTube...")
+    final_description = content["description"] + f"\n\n{get_attribution_text(track_name)}"
     video_id = upload_video(
         video_path=video_path,
         title=content["title"],
-        description=content["description"],
+        description=final_description,
         tags=content["tags"],
     )
     set_thumbnail(video_id, thumbnail_path)

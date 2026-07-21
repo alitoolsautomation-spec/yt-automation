@@ -19,6 +19,8 @@ def assemble_video(clip_paths: list, audio_path: str, title: str,
         target_height = 1920
         target_width = 1080
 
+    MAX_CLIP_SECONDS = 5
+
     clips = []
     for p in clip_paths:
         c = VideoFileClip(p)
@@ -28,6 +30,8 @@ def assemble_video(clip_paths: list, audio_path: str, title: str,
         w = c.w
         x_center = w / 2
         c = c.cropped(x_center=x_center, width=target_width)
+        if c.duration > MAX_CLIP_SECONDS:
+            c = c.subclipped(0, MAX_CLIP_SECONDS)
         clips.append(c)
 
     combined = concatenate_videoclips(clips, method="compose")

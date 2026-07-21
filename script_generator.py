@@ -15,10 +15,14 @@ def generate_video_content(theme: str, language: str = "Urdu", video_format: str
         length_instruction = "4-6 minute (roughly 600-900 words) in-depth"
         script_note = "This is a longer video, so develop the story with more detail, examples, and structure (intro, 2-3 main points, conclusion) while staying engaging throughout."
         footage_extra = ', "keyword 4", "keyword 5", "keyword 6", "keyword 7"'
+        cta_note = ""
     else:
         length_instruction = "60-90 second (roughly 150-220 words)"
         script_note = "Keep it tight and punchy since this is a short-form video."
         footage_extra = ""
+        cta_note = (" - since this is a Short, also mention there's a full, "
+                     "deeper video on this exact topic on the channel, "
+                     "encouraging viewers to check the channel for more")
 
     if language.lower() == "urdu":
         script_rules = """ZAROORI HIDAYAAT for "script" field (ye seedha text-to-speech
@@ -118,14 +122,17 @@ Bad generic titles (NEVER write like this): "Discipline Leads To Success",
 "A Story About Hard Work", "Motivation For Life"
 Good high-CTR titles (write LIKE this): "This 1 Habit Made Him A Millionaire Before Age 30 💰",
 "99% Of People Fail Because Of This ONE Mistake 😳", "The Real Reason Successful People Wake Up At 5AM 🔥",
-"Scientists Just Discovered This Shocking Fact About Your Brain 🧠"
+"Scientists Just Discovered This Shocking Fact About Your Brain 🧠", "This Habit Is Silently Ruining Your Success 😳"
+Also consider "negative curiosity" framing (warning about a mistake or
+harmful habit) as an alternative to purely positive framing - both
+styles work well, vary between them across different videos.
 Rules:
-- Use the FULL available space, 60-100 characters - longer, keyword-rich
-  titles rank better in search than short vague ones
+- Aim for 50-70 characters (mobile screens often truncate longer titles,
+  and shorter titles ensure the full message is seen)
 - CRITICAL: Front-load the most important word or benefit within the
-  FIRST 3 WORDS, since mobile screens truncate titles around 50
-  characters and viewers scan left-to-right fast. Put the name/subject/
-  benefit first, supporting curiosity-hook words after.
+  FIRST 3 WORDS, since mobile screens truncate titles fast and viewers
+  scan left-to-right quickly. Put the name/subject/benefit first,
+  supporting curiosity-hook words after.
   Example: "Thomas Edison's 1 Habit For Success (Millionaire Mindset)"
   is better than "The 1 Habit That Made Thomas Edison A Millionaire..."
   because "Thomas Edison" (the recognizable hook) appears immediately.
@@ -156,7 +163,7 @@ Rules:
   and is weighted heaviest by YouTube's algorithm
 - Line 3-5: expand on the story/value, mention 2-3 related keywords
   naturally (not stuffed), build more curiosity
-- Line 6: a soft call-to-action (follow/subscribe for more content like this)
+- Line 6: a soft call-to-action (follow/subscribe for more content like this){cta_note}
 - Then a blank line, followed by 10-12 relevant hashtags mixing broad
   high-traffic tags (#motivation #shorts #viral #factsdaily #successstory)
   with niche specific ones related to this exact topic
