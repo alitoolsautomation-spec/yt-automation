@@ -171,12 +171,12 @@ Rules:
   and detailed for search ranking
 
 ## TAGS
-- 10-15 tags mixing: broad high-search-volume tags (motivation, success,
-  islamic reminder, facts, shorts, viral shorts), medium-competition niche
-  tags related to the theme, and 2-3 long-tail specific phrase tags
-- Include terms US viewers commonly search (e.g. "motivation usa",
-  "american success story" where naturally relevant - don't force this
-  on universal topics)
+- 10-15 tags mixing: broad high-search-volume GLOBAL tags (motivation,
+  success, islamic reminder, facts, shorts, viral shorts - these work
+  worldwide), medium-competition niche tags related to the theme, and
+  2-3 long-tail specific phrase tags
+- Do not limit tags to US-specific phrasing - use universal English
+  terms that a global audience searches for in this niche
 
 Return ONLY this exact JSON, no preamble, no markdown fences:
 

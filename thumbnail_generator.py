@@ -117,6 +117,14 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
     draw = ImageDraw.Draw(canvas)
     text_area_w = int(thumb_w * 0.56) if portrait else thumb_w
 
+    # Rotate through accent colors seen in high-performing thumbnails
+    import random
+    accent_color = random.choice([
+        (255, 214, 0),   # yellow
+        (255, 70, 70),   # red
+        (0, 220, 210),   # teal/cyan
+    ])
+
     # Big bold headline text, left-aligned, 3-4 words max per YouTube's guidance
     words = hook_text.split()[:4]
     headline = " ".join(words).upper()
@@ -141,7 +149,7 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
     x_margin = 60
 
     for i, line in enumerate(lines):
-        color = (255, 214, 0) if i == len(lines) - 1 else (255, 255, 255)
+        color = accent_color if i == len(lines) - 1 else (255, 255, 255)
         bbox = draw.textbbox((0, 0), line, font=font)
         line_h = bbox[3] - bbox[1]
         outline_range = 3
@@ -151,8 +159,18 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
         draw.text((x_margin, y), line, font=font, fill=color)
         y += line_h * 1.3
 
-    # Bold underline accent
-    draw.rectangle([x_margin, y + 10, x_margin + 220, y + 20], fill=(255, 214, 0))
+    # Bold underline accent matching the headline's accent color
+    draw.rectangle([x_margin, y + 10, x_margin + 220, y + 20], fill=accent_color)
+
+    # Subtle vignette around the whole frame for a more polished, cinematic look
+    vignette = Image.new("L", (thumb_w, thumb_h), 0)
+    vdraw = ImageDraw.Draw(vignette)
+    vdraw.rectangle([0, 0, thumb_w, thumb_h], fill=0)
+    border = 60
+    vdraw.rectangle([border, border, thumb_w - border, thumb_h - border], fill=60)
+    vignette = vignette.filter(__import__("PIL.ImageFilter", fromlist=["GaussianBlur"]).GaussianBlur(80))
+    dark_layer = Image.new("RGB", (thumb_w, thumb_h), (0, 0, 0))
+    canvas = Image.composite(canvas, dark_layer, vignette.point(lambda p: 255 - p))
 
     canvas.save(output_path, quality=95)
     return output_path
