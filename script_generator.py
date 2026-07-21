@@ -78,11 +78,12 @@ watching or swipe away within 1-2 seconds. Follow these rules strictly:
 - After the hook, keep escalating - each sentence should make the viewer
   want the next sentence, don't let the energy drop in the middle
 - CRITICAL PACING RULE (based on real audience data): after the opening
-  hook, reveal the core answer/habit/fact within the first 15 seconds
-  (roughly the first 2-3 sentences) rather than saving it for the end.
-  Then spend the rest of the script explaining WHY it works and HOW to
-  apply it. Viewers who get quick value stay longer than viewers made to
-  wait for a reveal.
+  hook, reveal the core answer/habit/fact promised in the TITLE within
+  the first 10 seconds (roughly the first 1-2 sentences) rather than
+  saving it for the end. The title's promise must be delivered almost
+  immediately, or viewers feel misled and leave - this directly hurts
+  ranking. Then spend the rest of the script explaining WHY it works and
+  HOW to apply it.
 - Middle: tell a vivid, specific story or fact with real emotional or
   "wow" value - avoid generic/vague statements
 - End with a punchy, memorable takeaway line
@@ -121,6 +122,13 @@ Good high-CTR titles (write LIKE this): "This 1 Habit Made Him A Millionaire Bef
 Rules:
 - Use the FULL available space, 60-100 characters - longer, keyword-rich
   titles rank better in search than short vague ones
+- CRITICAL: Front-load the most important word or benefit within the
+  FIRST 3 WORDS, since mobile screens truncate titles around 50
+  characters and viewers scan left-to-right fast. Put the name/subject/
+  benefit first, supporting curiosity-hook words after.
+  Example: "Thomas Edison's 1 Habit For Success (Millionaire Mindset)"
+  is better than "The 1 Habit That Made Thomas Edison A Millionaire..."
+  because "Thomas Edison" (the recognizable hook) appears immediately.
 - Use DIGITS for numbers here (e.g. "99%", "3 Habits"), NOT spelled-out
   words - this rule is different from the script field below
 - Include at least one strong, high-search-volume keyword phrase people
@@ -142,8 +150,10 @@ Rules:
   before/after framing, direct bold claims, etc.)
 
 ## SEO DESCRIPTION (critical for search ranking) - WRITE 6-8 FULL LINES
-- Line 1-2: restate the hook/main keyword naturally as if answering what
-  someone searched for (this is what shows in search results)
+- Line 1-2: MUST repeat your main keywords naturally (e.g. "motivation",
+  "success habits", "islamic reminder" - whichever apply) as if directly
+  answering a search query, since this is what shows in search results
+  and is weighted heaviest by YouTube's algorithm
 - Line 3-5: expand on the story/value, mention 2-3 related keywords
   naturally (not stuffed), build more curiosity
 - Line 6: a soft call-to-action (follow/subscribe for more content like this)
