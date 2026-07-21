@@ -1,38 +1,27 @@
 """
-Generates a custom YouTube thumbnail: grabs a frame from the assembled
-video and overlays bold, high-contrast text (from the title) on it.
-Works for both vertical (Shorts) and horizontal (regular) videos.
+Generates a professional YouTube thumbnail in the "bold text + serious
+portrait photo" style: dark background, large bold text on one side,
+a confident/serious-looking stock portrait on the other side.
+Falls back to a video-frame-based thumbnail if no suitable photo is found.
 """
+import os
 import textwrap
+import requests
+from io import BytesIO
 from moviepy import VideoFileClip
 from PIL import Image, ImageDraw, ImageFont
 
+PEXELS_PHOTO_URL = "https://api.pexels.com/v1/search"
 
-def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thumbnail.jpg",
-                        orientation: str = "vertical") -> str:
-    clip = VideoFileClip(video_path)
-    frame_time = min(1.0, clip.duration / 2)
-    frame = clip.get_frame(frame_time)
-    img = Image.fromarray(frame).convert("RGB")
+PORTRAIT_SEARCH_TERMS = [
+    "confident businessman portrait serious",
+    "determined man face portrait dark",
+    "focused professional portrait studio",
+    "serious confident person portrait",
+]
 
-    # Standard YouTube thumbnail is always 1280x720 (horizontal) even for
-    # Shorts - so we letterbox/crop vertical frames into a 16:9 canvas.
-    thumb_w, thumb_h = 1280, 720
-    if orientation == "vertical":
-        # center-crop a 16:9 slice out of the vertical frame for the thumbnail
-        crop_h = int(img.width * thumb_h / thumb_w)
-        top = max(0, (img.height - crop_h) // 3)  # bias toward upper-middle
-        img = img.crop((0, top, img.width, top + crop_h))
-    img = img.resize((thumb_w, thumb_h))
 
-    overlay = Image.new("RGB", img.size, (0, 0, 0))
-    img = Image.blend(img, overlay, 0.35)
-
-    draw = ImageDraw.Draw(img)
-    width, height = img.size
-
-    font_size = int(width * 0.12)
-    font = None
+def _load_font(size):
     for font_path in [
         "/usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf",
         "C:/Windows/Fonts/arialbd.ttf",
@@ -40,33 +29,118 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
         "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
     ]:
         try:
-            font = ImageFont.truetype(font_path, font_size)
-            break
+            return ImageFont.truetype(font_path, size)
         except Exception:
             continue
-    if font is None:
-        font = ImageFont.load_default()
+    return ImageFont.load_default()
 
-    short_text = " ".join(hook_text.split()[:4]).upper()
-    wrapped = textwrap.fill(short_text, width=12)
 
+def _fetch_portrait_photo(query: str = None):
+    headers = {"Authorization": os.getenv("PEXELS_API_KEY")}
+    import random
+    search_query = query or random.choice(PORTRAIT_SEARCH_TERMS)
+    params = {"query": search_query, "per_page": 5, "orientation": "portrait"}
+    resp = requests.get(PEXELS_PHOTO_URL, headers=headers, params=params, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    photos = data.get("photos", [])
+    if not photos:
+        return None
+    import random as _r
+    photo = _r.choice(photos)
+    img_url = photo["src"]["large2x"]
+    img_resp = requests.get(img_url, timeout=30)
+    img_resp.raise_for_status()
+    return Image.open(BytesIO(img_resp.content)).convert("RGB")
+
+
+def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thumbnail.jpg",
+                        orientation: str = "vertical") -> str:
+    thumb_w, thumb_h = 1280, 720
+    canvas = Image.new("RGB", (thumb_w, thumb_h), (10, 10, 12))
+
+    portrait = None
+    try:
+        portrait = _fetch_portrait_photo()
+    except Exception as e:
+        print(f"    (Could not fetch portrait photo, using video frame fallback: {e})")
+
+    if portrait:
+        # Portrait goes on the right ~45% of the canvas, full height
+        portrait_w = int(thumb_w * 0.46)
+        p = portrait.resize((portrait_w, int(portrait.height * portrait_w / portrait.width)))
+        if p.height < thumb_h:
+            p = p.resize((int(p.width * thumb_h / p.height), thumb_h))
+        # center-crop vertically
+        top = max(0, (p.height - thumb_h) // 2)
+        p = p.crop((0, top, portrait_w, top + thumb_h))
+        canvas.paste(p, (thumb_w - portrait_w, 0))
+
+        # Slight dark gradient fade where portrait meets text side for blend
+        fade = Image.new("L", (80, thumb_h), 0)
+        fade_draw = ImageDraw.Draw(fade)
+        for x in range(80):
+            fade_draw.line([(x, 0), (x, thumb_h)], fill=int(255 * (1 - x / 80)))
+        dark_strip = Image.new("RGB", (80, thumb_h), (10, 10, 12))
+        canvas.paste(dark_strip, (thumb_w - portrait_w - 0, 0), fade)
+    else:
+        if video_path:
+            # Fallback: use a frame from the actual video as before
+            clip = VideoFileClip(video_path)
+            frame_time = min(1.0, clip.duration / 2)
+            frame = clip.get_frame(frame_time)
+            img = Image.fromarray(frame).convert("RGB")
+            if orientation == "vertical":
+                crop_h = int(img.width * thumb_h / thumb_w)
+                top = max(0, (img.height - crop_h) // 3)
+                img = img.crop((0, top, img.width, top + crop_h))
+            img = img.resize((thumb_w, thumb_h))
+            overlay = Image.new("RGB", img.size, (0, 0, 0))
+            canvas = Image.blend(img, overlay, 0.4)
+            clip.close()
+        else:
+            # No video file and no portrait photo available - plain dark canvas
+            canvas = Image.new("RGB", (thumb_w, thumb_h), (15, 15, 18))
+
+    draw = ImageDraw.Draw(canvas)
+    text_area_w = int(thumb_w * 0.56) if portrait else thumb_w
+
+    # Big bold headline text, left-aligned, 3-4 words max per YouTube's guidance
+    words = hook_text.split()[:4]
+    headline = " ".join(words).upper()
+
+    font_size = 108
+    font = _load_font(font_size)
+    wrapped = textwrap.fill(headline, width=10)
     lines = wrapped.split("\n")
-    total_h = sum(draw.textbbox((0, 0), line, font=font)[3] for line in lines) * 1.2
-    y = (height - total_h) / 2
 
-    for line in lines:
+    # shrink font if too many lines / too wide
+    while True:
+        font = _load_font(font_size)
+        max_line_w = max(draw.textbbox((0, 0), line, font=font)[2] for line in lines)
+        if max_line_w < text_area_w - 80 or font_size <= 50:
+            break
+        font_size -= 6
+        wrapped = textwrap.fill(headline, width=10)
+        lines = wrapped.split("\n")
+
+    total_h = sum(draw.textbbox((0, 0), line, font=font)[3] for line in lines) * 1.25
+    y = (thumb_h - total_h) / 2
+    x_margin = 60
+
+    for i, line in enumerate(lines):
+        color = (255, 214, 0) if i == len(lines) - 1 else (255, 255, 255)
         bbox = draw.textbbox((0, 0), line, font=font)
-        line_w = bbox[2] - bbox[0]
         line_h = bbox[3] - bbox[1]
-        x = (width - line_w) / 2
-
-        outline_range = max(2, font_size // 25)
+        outline_range = 3
         for dx in range(-outline_range, outline_range + 1):
             for dy in range(-outline_range, outline_range + 1):
-                draw.text((x + dx, y + dy), line, font=font, fill=(0, 0, 0))
-        draw.text((x, y), line, font=font, fill=(255, 214, 0))
+                draw.text((x_margin + dx, y + dy), line, font=font, fill=(0, 0, 0))
+        draw.text((x_margin, y), line, font=font, fill=color)
         y += line_h * 1.3
 
-    img.save(output_path, quality=95)
-    clip.close()
+    # Bold underline accent
+    draw.rectangle([x_margin, y + 10, x_margin + 220, y + 20], fill=(255, 214, 0))
+
+    canvas.save(output_path, quality=95)
     return output_path
