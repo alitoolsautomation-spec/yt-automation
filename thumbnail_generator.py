@@ -35,19 +35,31 @@ def _load_font(size):
     return ImageFont.load_default()
 
 
-def _fetch_portrait_photo(query: str = None):
+def _fetch_portrait_photo(topic_query: str = None):
     headers = {"Authorization": os.getenv("PEXELS_API_KEY")}
     import random
-    search_query = query or random.choice(PORTRAIT_SEARCH_TERMS)
-    params = {"query": search_query, "per_page": 5, "orientation": "portrait"}
+    if topic_query:
+        # Combine the video's actual topic with portrait-style descriptors
+        # so the photo matches what the video is about, not a random face
+        search_query = f"{topic_query} portrait person"
+    else:
+        search_query = random.choice(PORTRAIT_SEARCH_TERMS)
+    params = {"query": search_query, "per_page": 6, "orientation": "portrait"}
     resp = requests.get(PEXELS_PHOTO_URL, headers=headers, params=params, timeout=30)
     resp.raise_for_status()
     data = resp.json()
     photos = data.get("photos", [])
+    if not photos and topic_query:
+        # Topic-specific search found nothing - fall back to generic portrait terms
+        search_query = random.choice(PORTRAIT_SEARCH_TERMS)
+        params = {"query": search_query, "per_page": 6, "orientation": "portrait"}
+        resp = requests.get(PEXELS_PHOTO_URL, headers=headers, params=params, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        photos = data.get("photos", [])
     if not photos:
         return None
-    import random as _r
-    photo = _r.choice(photos)
+    photo = random.choice(photos)
     img_url = photo["src"]["large2x"]
     img_resp = requests.get(img_url, timeout=30)
     img_resp.raise_for_status()
@@ -55,13 +67,13 @@ def _fetch_portrait_photo(query: str = None):
 
 
 def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thumbnail.jpg",
-                        orientation: str = "vertical") -> str:
+                        orientation: str = "vertical", topic_query: str = None) -> str:
     thumb_w, thumb_h = 1280, 720
     canvas = Image.new("RGB", (thumb_w, thumb_h), (10, 10, 12))
 
     portrait = None
     try:
-        portrait = _fetch_portrait_photo()
+        portrait = _fetch_portrait_photo(topic_query)
     except Exception as e:
         print(f"    (Could not fetch portrait photo, using video frame fallback: {e})")
 

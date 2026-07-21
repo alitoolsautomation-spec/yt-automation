@@ -62,9 +62,11 @@ def run_pipeline():
                                  orientation=orientation)
 
     print(f"[{run_id}] Generating thumbnail...")
+    topic_query = content["footage_keywords"][0] if content.get("footage_keywords") else theme
     thumbnail_path = generate_thumbnail(video_path, content["title"],
                                          output_path=f"{work_dir}/thumbnail.jpg",
-                                         orientation=orientation)
+                                         orientation=orientation,
+                                         topic_query=topic_query)
 
     print(f"[{run_id}] 5/5 Uploading to YouTube...")
     final_description = content["description"] + f"\n\n{get_attribution_text(track_name)}"
