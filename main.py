@@ -18,9 +18,35 @@ from footage_fetcher import fetch_clips
 from video_assembler import assemble_video
 from background_music import fetch_random_music, mix_narration_with_music, get_attribution_text
 from thumbnail_generator import generate_thumbnail
-from youtube_uploader import upload_video, set_thumbnail, post_engagement_comment
+from youtube_uploader import upload_video, set_thumbnail, post_engagement_comment, set_localizations
+from localization import translate_metadata
 
 load_dotenv()
+
+
+def get_next_category():
+    """
+    Picks a category that hasn't been used recently, cycling through
+    ALL categories before any repeat. Falls back to full random choice
+    once every category has been used in the current cycle.
+    """
+    used_themes = set()
+    if os.path.exists("scripts_log.jsonl"):
+        try:
+            with open("scripts_log.jsonl", "r", encoding="utf-8") as f:
+                entries = [json.loads(line) for line in f if line.strip()]
+            # Look at the most recent (N-1) runs so every category gets
+            # used once before any repeats happen
+            recent = entries[-(len(CATEGORIES) - 1):] if entries else []
+            used_themes = {e.get("theme") for e in recent if e.get("theme")}
+        except Exception:
+            pass
+
+    available = [c for c in CATEGORIES if c["theme"] not in used_themes]
+    if not available:
+        available = CATEGORIES  # full cycle completed, reset
+
+    return random.choice(available)
 
 
 def run_pipeline():
@@ -31,7 +57,7 @@ def run_pipeline():
     if len(sys.argv) > 1:
         category = CATEGORIES[int(sys.argv[1])]
     else:
-        category = random.choice(CATEGORIES)
+        category = get_next_category()
     theme = category["theme"]
     language = category["language"]
     video_format = category.get("format", "short")
@@ -81,6 +107,13 @@ def run_pipeline():
     if content.get("engagement_comment"):
         post_engagement_comment(video_id, content["engagement_comment"])
 
+    print(f"[{run_id}] Adding multi-language translations for global reach...")
+    try:
+        localizations = translate_metadata(content["title"], final_description)
+        set_localizations(video_id, localizations)
+    except Exception as e:
+        print(f"    Skipped localization: {e}")
+
     print(f"[{run_id}] DONE -> https://youtube.com/watch?v={video_id}")
 
     # Save script content permanently to a log file (so it's never lost)
@@ -88,6 +121,7 @@ def run_pipeline():
         "run_id": run_id,
         "video_id": video_id,
         "video_url": f"https://youtube.com/watch?v={video_id}",
+        "theme": theme,
         "language": language,
         "format": video_format,
         "title": content["title"],

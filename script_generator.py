@@ -127,8 +127,8 @@ Also consider "negative curiosity" framing (warning about a mistake or
 harmful habit) as an alternative to purely positive framing - both
 styles work well, vary between them across different videos.
 Rules:
-- Aim for 50-70 characters (mobile screens often truncate longer titles,
-  and shorter titles ensure the full message is seen)
+- Aim for 90-100 characters (use YouTube's full title limit for maximum
+  keyword coverage and SEO value)
 - CRITICAL: Front-load the most important word or benefit within the
   FIRST 3 WORDS, since mobile screens truncate titles fast and viewers
   scan left-to-right quickly. Put the name/subject/benefit first,
@@ -156,19 +156,26 @@ Rules:
   changed everything", "what nobody tells you", numbered lists,
   before/after framing, direct bold claims, etc.)
 
-## SEO DESCRIPTION (critical for search ranking) - WRITE 6-8 FULL LINES
+## SEO DESCRIPTION (critical for search ranking) - WRITE A LONG, FULL DESCRIPTION
+YouTube allows up to 5000 characters - use a large portion of that space
+(aim for 2500-4000 characters, several paragraphs) for maximum SEO value.
 - Line 1-2: MUST repeat your main keywords naturally (e.g. "motivation",
   "success habits", "islamic reminder" - whichever apply) as if directly
   answering a search query, since this is what shows in search results
   and is weighted heaviest by YouTube's algorithm
-- Line 3-5: expand on the story/value, mention 2-3 related keywords
-  naturally (not stuffed), build more curiosity
-- Line 6: a soft call-to-action (follow/subscribe for more content like this){cta_note}
-- Then a blank line, followed by 10-12 relevant hashtags mixing broad
+- Next 2-4 full paragraphs: expand deeply on the video's story/topic -
+  retell the key points in more detail, add context, mention related
+  figures/concepts, explain why this matters in daily life, and
+  naturally weave in related keywords throughout (informative and
+  thorough, not keyword-stuffed)
+- A paragraph connecting this to the channel's broader themes
+  (motivation, Islamic wisdom, productivity, success)
+- A soft call-to-action (follow/subscribe for more content like this){cta_note}
+- Then a blank line, followed by 12-15 relevant hashtags mixing broad
   high-traffic tags (#motivation #shorts #viral #factsdaily #successstory)
   with niche specific ones related to this exact topic
-- Do NOT write a short 2-3 line description - this must be substantial
-  and detailed for search ranking
+- Do NOT write a short description - this must be long, substantial,
+  and detailed for maximum search ranking value
 
 ## TAGS
 - 10-15 tags mixing: broad high-search-volume GLOBAL tags (motivation,
@@ -203,7 +210,7 @@ Return ONLY this exact JSON, no preamble, no markdown fences:
                 "model": MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 1.0,
-                "max_tokens": 3000,
+                "max_tokens": 5000,
             },
             timeout=60,
         )
