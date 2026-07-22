@@ -34,4 +34,10 @@ CATEGORIES = [
     {"theme": "the science of consistency - why athlete Muhammad Ali never gave up, viewed through an Islamic lens on patience", "language": "English", "format": "long"},
     {"theme": "how Malala Yousafzai's courage and discipline reflect Islamic teachings on standing firm for what's right", "language": "English", "format": "short"},
     {"theme": "what Warren Buffett's daily discipline habits have in common with Islamic teachings on consistency", "language": "English", "format": "short"},
+    # General world topics for extra variety (facts, history, science)
+    {"theme": "a mind-blowing general knowledge fact about space or the universe that most people don't know", "language": "English", "format": "short"},
+    {"theme": "an incredible true story from world history that most people have never heard", "language": "English", "format": "long"},
+    {"theme": "a fascinating scientific discovery that changed how we understand the human body or brain", "language": "English", "format": "short"},
+    {"theme": "an amazing fact about the natural world (animals, oceans, or Earth) that sounds unbelievable but is true", "language": "English", "format": "short"},
+    {"theme": "a surprising piece of ancient history that reveals how advanced early civilizations really were", "language": "English", "format": "long"},
 ]
