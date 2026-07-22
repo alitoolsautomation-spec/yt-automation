@@ -78,23 +78,32 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
         print(f"    (Could not fetch portrait photo, using video frame fallback: {e})")
 
     if portrait:
-        # Portrait goes on the right ~45% of the canvas, full height
-        portrait_w = int(thumb_w * 0.46)
-        p = portrait.resize((portrait_w, int(portrait.height * portrait_w / portrait.width)))
+        # Portrait fills most of the frame (dramatic close-up style like
+        # top motivational channels), text overlaid on a dark box on
+        # one side rather than a small side panel
+        p = portrait.resize((thumb_w, int(portrait.height * thumb_w / portrait.width)))
         if p.height < thumb_h:
             p = p.resize((int(p.width * thumb_h / p.height), thumb_h))
-        # center-crop vertically
-        top = max(0, (p.height - thumb_h) // 2)
-        p = p.crop((0, top, portrait_w, top + thumb_h))
-        canvas.paste(p, (thumb_w - portrait_w, 0))
+        # crop to fill full canvas, biased toward upper portion (faces
+        # are usually in the upper 2/3 of portrait photos)
+        top = max(0, int((p.height - thumb_h) * 0.25))
+        p = p.crop((0, top, thumb_w, top + thumb_h))
+        # bias horizontally so the face tends toward the left/center,
+        # leaving the right side a bit darker for text if needed
+        canvas = p.convert("RGB")
 
-        # Slight dark gradient fade where portrait meets text side for blend
-        fade = Image.new("L", (80, thumb_h), 0)
-        fade_draw = ImageDraw.Draw(fade)
-        for x in range(80):
-            fade_draw.line([(x, 0), (x, thumb_h)], fill=int(255 * (1 - x / 80)))
-        dark_strip = Image.new("RGB", (80, thumb_h), (10, 10, 12))
-        canvas.paste(dark_strip, (thumb_w - portrait_w - 0, 0), fade)
+        # Dark gradient overlay on one side (randomly left or right) so
+        # text stays readable regardless of where the face ends up
+        text_side = "right"
+        gradient = Image.new("L", (thumb_w, thumb_h), 0)
+        gdraw = ImageDraw.Draw(gradient)
+        grad_w = int(thumb_w * 0.65)
+        for x in range(grad_w):
+            alpha = int(200 * (x / grad_w))
+            gx = thumb_w - grad_w + x if text_side == "right" else grad_w - x
+            gdraw.line([(gx, 0), (gx, thumb_h)], fill=alpha)
+        dark_layer = Image.new("RGB", (thumb_w, thumb_h), (0, 0, 0))
+        canvas = Image.composite(dark_layer, canvas, Image.eval(gradient, lambda a: a))
     else:
         if video_path:
             # Fallback: use a frame from the actual video as before
@@ -115,7 +124,7 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
             canvas = Image.new("RGB", (thumb_w, thumb_h), (15, 15, 18))
 
     draw = ImageDraw.Draw(canvas)
-    text_area_w = int(thumb_w * 0.56) if portrait else thumb_w
+    text_area_w = int(thumb_w * 0.62) if portrait else thumb_w
 
     # Rotate through accent colors seen in high-performing thumbnails
     import random
@@ -146,7 +155,7 @@ def generate_thumbnail(video_path: str, hook_text: str, output_path: str = "thum
 
     total_h = sum(draw.textbbox((0, 0), line, font=font)[3] for line in lines) * 1.25
     y = (thumb_h - total_h) / 2
-    x_margin = 60
+    x_margin = int(thumb_w * 0.42) if portrait else 60
 
     for i, line in enumerate(lines):
         color = accent_color if i == len(lines) - 1 else (255, 255, 255)
