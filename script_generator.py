@@ -50,6 +50,12 @@ United States audience.
 
 Theme: {theme}
 Output language: {title_desc_lang}
+
+CRITICAL VARIETY RULE: Do not default to overused examples like Thomas
+Edison, Elon Musk, or Bill Gates unless the theme specifically names
+that person. Stick precisely to the person/story/concept named in the
+theme above - use specific, accurate details about THAT figure or
+concept, not a generic substitute.
 Target audience: United States viewers
 
 AUDIENCE TARGETING RULES:

@@ -27,4 +27,11 @@ CATEGORIES = [
     {"theme": "a short reflection on how sabr (patience) during difficulty leads to unexpected success", "language": "English", "format": "short"},
     {"theme": "how the concept of barakah (blessing) changes the way successful people think about time and wealth", "language": "English", "format": "short"},
     {"theme": "a quick lesson on how trusting Allah's plan reduces stress about the future", "language": "English", "format": "short"},
+    # Blended: Islamic teachings + historical/modern success figures (top-performing combo)
+    {"theme": "5 morning habits of successful Muslims for peak productivity and spiritual peace", "language": "English", "format": "long"},
+    {"theme": "how Marie Curie's relentless dedication reflects the Islamic principle of sabr (patience) and hard work", "language": "English", "format": "long"},
+    {"theme": "how Nelson Mandela's perseverance through hardship reflects Islamic teachings on patience and forgiveness", "language": "English", "format": "long"},
+    {"theme": "the science of consistency - why athlete Muhammad Ali never gave up, viewed through an Islamic lens on patience", "language": "English", "format": "long"},
+    {"theme": "how Malala Yousafzai's courage and discipline reflect Islamic teachings on standing firm for what's right", "language": "English", "format": "short"},
+    {"theme": "what Warren Buffett's daily discipline habits have in common with Islamic teachings on consistency", "language": "English", "format": "short"},
 ]
