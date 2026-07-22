@@ -26,9 +26,6 @@ def get_authenticated_service():
         else:
             client_secret_file = os.getenv("YOUTUBE_CLIENT_SECRET_FILE")
             flow = InstalledAppFlow.from_client_secrets_file(client_secret_file, SCOPES)
-            # Runs a local server for one-time browser OAuth consent (do this once manually).
-            # access_type=offline + prompt=consent ensures a refresh_token is issued so
-            # this keeps working unattended in GitHub Actions without re-login.
             creds = flow.run_local_server(port=0, access_type="offline", prompt="consent")
         with open(TOKEN_FILE, "wb") as f:
             pickle.dump(creds, f)
@@ -112,4 +109,30 @@ def post_engagement_comment(video_id: str, comment_text: str) -> bool:
         return True
     except Exception as e:
         print(f"Could not post comment: {e}")
+        return False
+
+
+def set_localizations(video_id: str, localizations: dict) -> bool:
+    """
+    Adds translated title/description for multiple languages so the
+    video is discoverable in search for viewers browsing YouTube in
+    those languages. Does not create separate videos or change the
+    default title/description shown to English viewers.
+    """
+    youtube = get_authenticated_service()
+    try:
+        video_response = youtube.videos().list(part="snippet", id=video_id).execute()
+        snippet = video_response["items"][0]["snippet"]
+        youtube.videos().update(
+            part="snippet,localizations",
+            body={
+                "id": video_id,
+                "snippet": snippet,
+                "localizations": localizations,
+            }
+        ).execute()
+        print(f"Added localizations for: {', '.join(localizations.keys())}")
+        return True
+    except Exception as e:
+        print(f"Could not set localizations: {e}")
         return False
